@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><title>Stopwatch</title>
+<style>
+  body{margin:0;background:#0d1117;color:#e6edf3;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column}
+  #time{font-size:5rem;font-weight:700;letter-spacing:4px;font-variant-numeric:tabular-nums;color:#58a6ff}
+  .btns{display:flex;gap:1rem;margin:1.5rem 0}
+  button{padding:.75rem 2rem;border:none;border-radius:8px;font-size:1rem;cursor:pointer;font-weight:600}
+  #start{background:#238636;color:#fff}#lap{background:#1f6feb;color:#fff}#reset{background:#da3633;color:#fff}
+  #laps{max-height:200px;overflow-y:auto;width:300px}
+  .lap{display:flex;justify-content:space-between;padding:.4rem .8rem;border-bottom:1px solid #30363d;font-size:.9rem}
+  .lap:nth-child(even){background:#161b22}
+</style>
+</head>
+<body>
+<div id="time">00:00.000</div>
+<div class="btns">
+  <button id="start" onclick="toggle()">Start</button>
+  <button id="lap" onclick="lap()" disabled>Lap</button>
+  <button id="reset" onclick="reset()">Reset</button>
+</div>
+<div id="laps"></div>
+<script>
+let running=false,start=0,elapsed=0,timer=null,lapCount=0;
+function fmt(ms){const m=Math.floor(ms/60000),s=Math.floor((ms%60000)/1000),cs=ms%1000;return`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(3,'0')}`}
+function toggle(){
+  if(running){clearInterval(timer);elapsed+=Date.now()-start;running=false;document.getElementById('start').textContent='Resume';document.getElementById('start').style.background='#388bfd'}
+  else{start=Date.now();timer=setInterval(()=>document.getElementById('time').textContent=fmt(elapsed+Date.now()-start),17);running=true;document.getElementById('start').textContent='Pause';document.getElementById('start').style.background='#e3b341';document.getElementById('lap').disabled=false}
+}
+function lap(){lapCount++;const t=fmt(elapsed+Date.now()-start);const d=document.createElement('div');d.className='lap';d.innerHTML=`<span>Lap ${lapCount}</span><span>${t}</span>`;document.getElementById('laps').prepend(d)}
+function reset(){clearInterval(timer);running=false;elapsed=0;lapCount=0;document.getElementById('time').textContent='00:00.000';document.getElementById('start').textContent='Start';document.getElementById('start').style.background='#238636';document.getElementById('lap').disabled=true;document.getElementById('laps').innerHTML=''}
+</script>
+</body></html>
